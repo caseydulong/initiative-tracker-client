@@ -1,9 +1,75 @@
+$black: #000000;
+$white: #FFFFFF;
+$gray: #DDDDDD;
+$dark-red: #8B0000;
+
 body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
 }
 
+button {
+  background-color: $dark-red;
+  border: 1px solid $black;
+  color: $white;
+}
+
+input {
+  // background-color: $white;
+  border: 1px solid $black;
+  color: $black;
+}
+
+table {
+  tr {
+    th {
+      background-color: $dark-red;
+      border: 1px solid $black;
+      color: $white;
+      padding: 8px;
+      text-align: left;
+    }
+    td {
+      border: 1px solid $black;
+      padding: 8px;
+      text-align: left;
+    }
+    &:nth-child(even) {
+      background-color: $gray;
+    }
+  }
+}
+
 .alert {
   margin: 30px;
+}
+
+.home {
+  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  * {
+    margin: 0;
+    padding: 1rem;
+    width: 500px;
+  }
+}
+
+.home-form {
+  padding: 0;
+  input {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  label {
+    height: 0;
+    padding: 0;
+  }
+}
+
+.init-col {
+  text-align: center;
 }
