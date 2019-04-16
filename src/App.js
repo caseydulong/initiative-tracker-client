@@ -2,12 +2,17 @@ import React, { Component } from 'react'
 import './App.scss'
 import { Route } from 'react-router-dom'
 
+// Auth components
 import AuthenticatedRoute from './auth/components/AuthenticatedRoute'
 import Header from './header/Header'
 import SignUp from './auth/components/SignUp'
 import SignIn from './auth/components/SignIn'
 import SignOut from './auth/components/SignOut'
 import ChangePassword from './auth/components/ChangePassword'
+
+// Encounter components
+import Home from './encounters/Home'
+import Encounter from './encounters/Encounter'
 
 import Alert from 'react-bootstrap/Alert'
 
@@ -43,6 +48,7 @@ class App extends Component {
           </Alert>
         ))}
         <main className="container">
+          { /* Auth routes */ }
           <Route path='/sign-up' render={() => (
             <SignUp alert={this.alert} setUser={this.setUser} />
           )} />
@@ -54,6 +60,14 @@ class App extends Component {
           )} />
           <AuthenticatedRoute user={user} path='/change-password' render={() => (
             <ChangePassword alert={this.alert} user={user} />
+          )} />
+
+          { /* Encounter routes */ }
+          <AuthenticatedRoute user={user} exact path='/' render={() => (
+            <Home user={user} />
+          )} />
+          <AuthenticatedRoute user={user} exact path='/encounters/:id' render={() => (
+            <Encounter user={user} />
           )} />
         </main>
       </React.Fragment>
