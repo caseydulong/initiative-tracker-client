@@ -29,7 +29,6 @@ class Home extends Component {
       }
     })
       .then(response => {
-        console.log(response)
         this.setState({
           submitted: true,
           encounter: response.data.encounter
@@ -53,11 +52,10 @@ class Home extends Component {
           encounter: response.data.encounter
         })
       })
-      // TODO: invalid ID on 404
       .catch(error => {
         console.error(error)
         this.setState({ encounter: { id: '' } })
-        // alert(messages.signInFailure, 'danger')
+        alert('Invalid encounter ID.', 'danger')
       })
   }
 

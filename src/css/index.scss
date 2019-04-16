@@ -1,13 +1,9 @@
-$black: #000000;
-$white: #FFFFFF;
-$gray: #DDDDDD;
-$dark-red: #8B0000;
-
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-}
+$black: #000;
+$white: #fff;
+$gray: #ddd;
+$dark-red: #8b0000;
+$dark: #343a40;
+$cornsilk: #fff8dc;
 
 button {
   background-color: $dark-red;
@@ -22,6 +18,8 @@ input {
 }
 
 table {
+  width: 500px;
+
   tr {
     th {
       background-color: $dark-red;
@@ -30,14 +28,24 @@ table {
       padding: 8px;
       text-align: left;
     }
+
     td {
       border: 1px solid $black;
       padding: 8px;
       text-align: left;
     }
+
     &:nth-child(even) {
       background-color: $gray;
     }
+
+    &:nth-child(odd) {
+      background-color: $white;
+    }
+  }
+
+  .init-col {
+    text-align: center;
   }
 }
 
@@ -45,12 +53,52 @@ table {
   margin: 30px;
 }
 
+// ENCOUNTER
+.encounter-view {
+  width: 100%;
+}
+
+.encounter-table {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.encounter-controls {
+  align-items: center;
+  background-color: $dark;
+  bottom: 0;
+  color: $white;
+  display: flex;
+  font-size: 50px;
+  height: 75px;
+  justify-content: space-around;
+  left: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+}
+
+.control-button {
+  &:hover {
+    text-shadow: 0 0 10px $white;
+  }
+  &:active {
+    color: $dark-red;
+    text-shadow: 0 0 10px $dark-red;
+  }
+}
+
+// HOME
 .home {
-  align-content: center;
+  align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
+
   * {
     margin: 0;
     padding: 1rem;
@@ -60,16 +108,14 @@ table {
 
 .home-form {
   padding: 0;
+
   input {
     margin-bottom: 1rem;
     text-align: center;
   }
+
   label {
     height: 0;
     padding: 0;
   }
-}
-
-.init-col {
-  text-align: center;
 }
