@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 import apiUrl from '../apiConfig'
@@ -40,7 +40,6 @@ class Home extends Component {
 
   handleSubmit = event => {
     event.preventDefault()
-    console.log(this.state.encounter.id)
     axios({
       url: `${apiUrl}/encounters/${this.state.encounter.id}`,
       method: 'get',
@@ -53,9 +52,6 @@ class Home extends Component {
           submitted: true,
           encounter: response.data.encounter
         })
-        console.log('=============')
-        console.log(response)
-        console.log(this.state)
       })
       // TODO: invalid ID on 404
       .catch(error => {
@@ -83,12 +79,11 @@ class Home extends Component {
     }
 
     return (
-      <Fragment>
+      <div className="home">
         <h2>Welcome!</h2>
         <button onClick={newEncounter}>Start New Encounter</button>
         <h3>-OR-</h3>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="id" />
+        <form className="home-form" onSubmit={handleSubmit}>
           <input
             value={encounter.id}
             name="id"
@@ -98,7 +93,7 @@ class Home extends Component {
           />
           <button type="submit">Continue Encounter</button>
         </form>
-      </Fragment>
+      </div>
     )
   }
 }
