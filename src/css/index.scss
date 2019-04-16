@@ -64,6 +64,13 @@ table {
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  h2 {
+    margin: 0;
+    padding: 1rem;
+  }
+  p {
+    padding: 1rem;
+  }
 }
 
 .encounter-controls {
@@ -76,7 +83,7 @@ table {
   height: 75px;
   justify-content: space-around;
   left: 0;
-  position: absolute;
+  position: fixed;
   right: 0;
   width: 100%;
 }
