@@ -137,7 +137,8 @@ class Encounter extends Component {
                   name="newCombatantName"
                   type="text"
                   placeholder="Name"
-                  onChange={handleChange} />
+                  onChange={handleChange}
+                  required />
                 <input
                   value={newCombatantInitiative}
                   name="newCombatantInitiative"
@@ -145,7 +146,8 @@ class Encounter extends Component {
                   min="1"
                   max="999"
                   placeholder="Initiative"
-                  onChange={handleChange} />
+                  onChange={handleChange}
+                  required />
               </div>
               <div className="encounter-form-interior">
                 <button type="submit">Add Combatant</button>
@@ -153,6 +155,8 @@ class Encounter extends Component {
             </form>
           </section>
         ) : ''}
+        { /* TEMPORARY DIV TO PREVENT FOOTER OVERLAP */ }
+        <div className="temp-div"></div>
         <section className="encounter-controls">
           <i className="fas fa-plus control-button" onClick={newCombatant}></i>
           <i className="fas fa-skull control-button"></i>
