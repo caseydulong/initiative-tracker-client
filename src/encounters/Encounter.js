@@ -15,26 +15,45 @@ class Encounter extends Component {
     }
   }
 
+  refreshEncounter = () => {
+    axios({
+      url: `${apiUrl}/encounters/${this.state.encounter._id}`,
+      method: 'get',
+      headers: { 'Authorization': `Token token=${this.state.user.token}` }
+    })
+      .then(response => this.setState({
+        encounter: response.data.encounter,
+        newCombatantName: '',
+        newCombatantInitiative: 0
+      }))
+      .catch(console.log)
+  }
+
   newCombatantSubmit = event => {
     event.preventDefault()
-    const { encounter, newCombatantName, newCombatantInitiative } = this.state
-    const combatants = encounter.combatants
+
+    const { newCombatantName, newCombatantInitiative } = this.state
+
+    const combatants = this.state.encounter.combatants
     combatants.push({
       name: newCombatantName,
       initiative: newCombatantInitiative
     })
-    encounter.combatants = combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
-    this.setState(this.state)
+    combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
 
     axios({
-      url: `${apiUrl}/encounters/${encounter._id}`,
+      url: `${apiUrl}/encounters/${this.state.encounter._id}`,
       method: 'patch',
       headers: {
         'Authorization': `Token token=${this.state.user.token}`
       },
-      data: { encounter }
+      data: { encounter: {
+        owner: this.state.encounter.owner,
+        combatants: combatants,
+        _id: this.state.encounter._id
+      } }
     })
-      .then(() => console.log('PATCH COMPLETE'))
+      .then(this.refreshEncounter)
       .catch(console.error)
   }
 
@@ -49,6 +68,7 @@ class Encounter extends Component {
   render () {
     const { newCombatant, newCombatantSubmit, handleChange } = this
     const { newCombatantForm, newCombatantName, newCombatantInitiative } = this.state
+    const { combatants } = this.state.encounter
 
     return (
       <div className="encounter-view">
@@ -66,9 +86,8 @@ class Encounter extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.encounter.combatants.map(combatant => (
+              {combatants.map(combatant => (
                 <tr key={combatant._id}>
-                  {console.log(combatant._id)}
                   <td>{combatant.name}</td>
                   <td className="init-col">{combatant.initiative}</td>
                 </tr>
@@ -91,7 +110,6 @@ class Encounter extends Component {
                 name="newCombatantInitiative"
                 type="number"
                 min="1"
-                placeholder="Initiative"
                 onChange={handleChange} />
               <button type="submit">Add Combatant</button>
             </form>
