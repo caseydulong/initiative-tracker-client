@@ -11,7 +11,7 @@ class Encounter extends Component {
       encounter: this.props.location.state.encounter,
       newCombatantForm: false,
       newCombatantName: '',
-      newCombatantInitiative: 0
+      newCombatantInitiative: ''
     }
   }
 
@@ -24,7 +24,7 @@ class Encounter extends Component {
       .then(response => this.setState({
         encounter: response.data.encounter,
         newCombatantName: '',
-        newCombatantInitiative: 0
+        newCombatantInitiative: ''
       }))
       .catch(console.log)
   }
@@ -62,7 +62,15 @@ class Encounter extends Component {
   }
 
   newCombatant = () => {
-    this.setState({ newCombatantForm: true })
+    if (!this.state.newCombatantForm) {
+      this.setState({ newCombatantForm: true })
+    } else {
+      this.setState({
+        newCombatantForm: false,
+        newCombatantName: '',
+        newCombatantInitiative: ''
+      })
+    }
   }
 
   render () {
@@ -97,21 +105,29 @@ class Encounter extends Component {
           <p>Encounter ID: {this.state.encounter._id}</p>
         </section>
         {newCombatantForm ? (
-          <section className="new-combatant">
-            <form onSubmit={newCombatantSubmit}>
-              <input
-                value={newCombatantName}
-                name="newCombatantName"
-                type="text"
-                placeholder="Name"
-                onChange={handleChange} />
-              <input
-                value={newCombatantInitiative}
-                name="newCombatantInitiative"
-                type="number"
-                min="1"
-                onChange={handleChange} />
-              <button type="submit">Add Combatant</button>
+          <section className="encounter-form-container">
+            <div className="encounter-form-interior">
+              <i className="fas fa-times control-button" onClick={newCombatant}></i>
+            </div>
+            <form onSubmit={newCombatantSubmit} className="encounter-form">
+              <div className="encounter-form-interior">
+                <input
+                  value={newCombatantName}
+                  name="newCombatantName"
+                  type="text"
+                  placeholder="Name"
+                  onChange={handleChange} />
+                <input
+                  value={newCombatantInitiative}
+                  name="newCombatantInitiative"
+                  type="number"
+                  min="1"
+                  placeholder="Initiative"
+                  onChange={handleChange} />
+              </div>
+              <div className="encounter-form-interior">
+                <button type="submit">Add Combatant</button>
+              </div>
             </form>
           </section>
         ) : ''}

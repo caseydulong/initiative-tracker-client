@@ -98,6 +98,39 @@ table {
   }
 }
 
+.encounter-form-container {
+  color: $dark;
+  width: 100%;
+}
+
+.encounter-form-interior {
+  display: flex;
+  flex-direction: space-between;
+  justify-content: flex-end;
+  padding: .5rem;
+  width: 100%;
+  * {
+    margin-left: .25rem;
+    margin-right: .25rem;
+    padding: .5rem;
+  }
+  input {
+    padding: .5rem;
+    width: 100%;
+  }
+  .control-button {
+    font-size: 35px;
+    padding: 0;
+    &:hover {
+      text-shadow: 0 0 10px $dark;
+    }
+    &:active {
+      color: $dark-red;
+      text-shadow: 0 0 10px $dark-red;
+    }
+  }
+}
+
 // HOME
 .home {
   align-items: center;
