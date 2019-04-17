@@ -11,7 +11,8 @@ class Encounter extends Component {
       encounter: this.props.location.state.encounter,
       newCombatantForm: false,
       newCombatantName: '',
-      newCombatantInitiative: ''
+      newCombatantInitiative: '',
+      currentTurn: ''
     }
   }
 
@@ -24,7 +25,8 @@ class Encounter extends Component {
       .then(response => this.setState({
         encounter: response.data.encounter,
         newCombatantName: '',
-        newCombatantInitiative: ''
+        newCombatantInitiative: '',
+        currentTurn: ''
       }))
       .catch(console.log)
   }
@@ -73,9 +75,25 @@ class Encounter extends Component {
     }
   }
 
+  nextTurn = () => {
+    const { encounter, currentTurn } = this.state
+    if (currentTurn === '' && encounter.combatants.length > 0) {
+      this.setState({ currentTurn: 0 })
+    } else if (currentTurn === encounter.combatants.length - 1) {
+      this.setState({ currentTurn: 0 })
+    } else {
+      this.setState({ currentTurn: currentTurn + 1 })
+    }
+    console.log(currentTurn)
+  }
+
   render () {
-    const { newCombatant, newCombatantSubmit, handleChange } = this
-    const { newCombatantForm, newCombatantName, newCombatantInitiative } = this.state
+    const { newCombatant, newCombatantSubmit, handleChange, nextTurn } = this
+    const {
+      newCombatantForm,
+      newCombatantName,
+      newCombatantInitiative,
+      currentTurn } = this.state
     const { combatants } = this.state.encounter
 
     return (
@@ -84,11 +102,13 @@ class Encounter extends Component {
           <h2>Encounter</h2>
           <table>
             <colgroup>
-              <col width="80%" />
+              <col width="2%" />
+              <col width="78%" />
               <col width="20%" />
             </colgroup>
             <thead>
               <tr>
+                <th></th>
                 <th>Combatant</th>
                 <th className="init-col">Initiative</th>
               </tr>
@@ -96,6 +116,7 @@ class Encounter extends Component {
             <tbody>
               {combatants.map(combatant => (
                 <tr key={combatant._id}>
+                  {currentTurn === combatants.indexOf(combatant) ? (<td className="current-turn"></td>) : (<td></td>)}
                   <td>{combatant.name}</td>
                   <td className="init-col">{combatant.initiative}</td>
                 </tr>
@@ -122,6 +143,7 @@ class Encounter extends Component {
                   name="newCombatantInitiative"
                   type="number"
                   min="1"
+                  max="999"
                   placeholder="Initiative"
                   onChange={handleChange} />
               </div>
@@ -135,7 +157,7 @@ class Encounter extends Component {
           <i className="fas fa-plus control-button" onClick={newCombatant}></i>
           <i className="fas fa-skull control-button"></i>
           <i className="fas fa-edit control-button"></i>
-          <i className="fas fa-play control-button"></i>
+          <i className="fas fa-play control-button" onClick={nextTurn}></i>
         </section>
       </div>
     )
