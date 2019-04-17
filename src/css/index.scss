@@ -134,6 +134,11 @@ table {
   }
 }
 
+.selected-combatant {
+  background-color: $dark;
+  color: $white;
+}
+
 .current-turn {
   background-color: lime;
 }

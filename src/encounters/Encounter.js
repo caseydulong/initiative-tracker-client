@@ -12,7 +12,8 @@ class Encounter extends Component {
       newCombatantForm: false,
       newCombatantName: '',
       newCombatantInitiative: '',
-      currentTurn: ''
+      currentTurn: '',
+      selectedCombatant: ''
     }
   }
 
@@ -87,13 +88,26 @@ class Encounter extends Component {
     console.log(currentTurn)
   }
 
+  selectCombatant = event => {
+    this.setState({ selectedCombatant: event.currentTarget.dataset.id })
+  }
+
   render () {
-    const { newCombatant, newCombatantSubmit, handleChange, nextTurn } = this
+    // Methods
+    const { newCombatant,
+      newCombatantSubmit,
+      handleChange,
+      nextTurn,
+      selectCombatant } = this
+
+    // State variables
     const {
       newCombatantForm,
       newCombatantName,
       newCombatantInitiative,
-      currentTurn } = this.state
+      currentTurn,
+      selectedCombatant } = this.state
+
     const { combatants } = this.state.encounter
 
     return (
@@ -115,11 +129,27 @@ class Encounter extends Component {
             </thead>
             <tbody>
               {combatants.map(combatant => (
-                <tr key={combatant._id}>
-                  {currentTurn === combatants.indexOf(combatant) ? (<td className="current-turn"></td>) : (<td></td>)}
-                  <td>{combatant.name}</td>
-                  <td className="init-col">{combatant.initiative}</td>
-                </tr>
+                selectedCombatant === combatant._id ? (
+                  <tr key={combatant._id} data-id={combatant._id} onClick={selectCombatant}>
+                    {currentTurn === combatants.indexOf(combatant) ? (
+                      <td className="current-turn"></td>
+                    ) : (
+                      <td></td>
+                    )}
+                    <td className="selected-combatant">{combatant.name}</td>
+                    <td className="init-col selected-combatant">{combatant.initiative}</td>
+                  </tr>
+                ) : (
+                  <tr key={combatant._id} data-id={combatant._id} onClick={selectCombatant}>
+                    {currentTurn === combatants.indexOf(combatant) ? (
+                      <td className="current-turn"></td>
+                    ) : (
+                      <td></td>
+                    )}
+                    <td>{combatant.name}</td>
+                    <td className="init-col">{combatant.initiative}</td>
+                  </tr>
+                )
               ))}
             </tbody>
           </table>
