@@ -88,6 +88,7 @@ class Home extends Component {
             type="text"
             placeholder="Encounter ID"
             onChange={handleChange}
+            required
           />
           <button type="submit">Continue Encounter</button>
         </form>
