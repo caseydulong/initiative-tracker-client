@@ -18,20 +18,28 @@ class Encounter extends Component {
     }
   }
 
+  clearForms = () => {
+    this.setState({
+      combatantNameInput: '',
+      combatantInitiativeInput: '',
+      selectedCombatant: ''
+    })
+  }
+
   refreshEncounter = () => {
     axios({
       url: `${apiUrl}/encounters/${this.state.encounter._id}`,
       method: 'get',
       headers: { 'Authorization': `Token token=${this.state.user.token}` }
     })
-      .then(response => this.setState({
-        encounter: response.data.encounter,
-        combatantNameInput: '',
-        combatantInitiativeInput: '',
-        currentTurn: '',
-        selectedCombatant: ''
-      }))
-      .catch(console.log)
+      .then(response => {
+        this.setState({ encounter: response.data.encounter, currentTurn: '' })
+        this.clearForms()
+      })
+      .catch(() => {
+        this.props.alert('Failed to refresh encounter.', 'danger')
+        this.clearForms()
+      })
   }
 
   newCombatantSubmit = event => {
@@ -58,42 +66,52 @@ class Encounter extends Component {
       } }
     })
       .then(this.refreshEncounter)
-      .catch(console.error)
+      .catch(() => {
+        this.props.alert('Failed to add combatant.', 'danger')
+        this.clearForms()
+      })
   }
 
   editCombatantSubmit = event => {
     event.preventDefault()
 
-    const { combatantNameInput, combatantInitiativeInput } = this.state
+    if (this.state.selectedCombatant !== '') {
+      const { combatantNameInput, combatantInitiativeInput } = this.state
 
-    const combatants = this.state.encounter.combatants
-    const index = () => {
-      for (let i = 0; i < combatants.length; i += 1) {
-        if (combatants[i]._id === this.state.selectedCombatant) {
-          return i
+      const combatants = this.state.encounter.combatants
+      const index = () => {
+        for (let i = 0; i < combatants.length; i += 1) {
+          if (combatants[i]._id === this.state.selectedCombatant) {
+            return i
+          }
         }
       }
-    }
-    combatants.splice(index(), 1)
-    combatants.push({
-      name: combatantNameInput,
-      initiative: combatantInitiativeInput
-    })
-    combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
+      combatants.splice(index(), 1)
+      combatants.push({
+        name: combatantNameInput,
+        initiative: combatantInitiativeInput
+      })
+      combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
 
-    axios({
-      url: `${apiUrl}/encounters/${this.state.encounter._id}`,
-      method: 'patch',
-      headers: {
-        'Authorization': `Token token=${this.state.user.token}`
-      },
-      data: { encounter: {
-        owner: this.state.encounter.owner,
-        combatants: combatants
-      } }
-    })
-      .then(this.refreshEncounter)
-      .catch(console.error)
+      axios({
+        url: `${apiUrl}/encounters/${this.state.encounter._id}`,
+        method: 'patch',
+        headers: {
+          'Authorization': `Token token=${this.state.user.token}`
+        },
+        data: { encounter: {
+          owner: this.state.encounter.owner,
+          combatants: combatants
+        } }
+      })
+        .then(this.refreshEncounter)
+        .catch(() => {
+          this.props.alert('Failed to update combatant.', 'danger')
+          this.clearForms()
+        })
+    } else {
+      this.props.alert('Must select a combatant.', 'info')
+    }
   }
 
   handleChange = event => {
@@ -116,12 +134,14 @@ class Encounter extends Component {
         combatantNameInput: combatants[index()].name,
         combatantInitiativeInput: combatants[index()].initiative
       })
-    } else {
+    } else if (this.state.editCombatantForm) {
       this.setState({
         editCombatantForm: false,
         combatantNameInput: '',
         combatantInitiativeInput: ''
       })
+    } else {
+      this.props.alert('Must select a combatant.', 'info')
     }
   }
 
@@ -144,7 +164,9 @@ class Encounter extends Component {
 
   nextTurn = () => {
     const { encounter, currentTurn } = this.state
-    if (currentTurn === '' && encounter.combatants.length > 0) {
+    if (currentTurn === '' && encounter.combatants.length === 0) {
+      this.props.alert('Must add a combatant.', 'info')
+    } else if (currentTurn === '' && encounter.combatants.length > 0) {
       this.setState({ currentTurn: 0 })
     } else if (currentTurn === encounter.combatants.length - 1) {
       this.setState({ currentTurn: 0 })
@@ -184,9 +206,12 @@ class Encounter extends Component {
         } }
       })
         .then(this.refreshEncounter)
-        .catch(console.error)
+        .catch(() => {
+          this.props.alert('Failed to delete combatant.', 'danger')
+          this.clearForms()
+        })
     } else {
-      alert('Must select a combatant.', 'danger')
+      this.props.alert('Must select a combatant.', 'info')
     }
   }
 
@@ -260,7 +285,8 @@ class Encounter extends Component {
         </section>
         {newCombatantForm ? (
           <section className="encounter-form-container">
-            <div className="encounter-form-interior">
+            <div className="encounter-form-header">
+              <h5>New Combatant</h5>
               <i className="fas fa-times control-button" onClick={newCombatant}></i>
             </div>
             <form onSubmit={newCombatantSubmit} className="encounter-form">
@@ -290,7 +316,8 @@ class Encounter extends Component {
         ) : ''}
         {editCombatantForm ? (
           <section className="encounter-form-container">
-            <div className="encounter-form-interior">
+            <div className="encounter-form-header">
+              <h5>Edit Selected Combatant</h5>
               <i className="fas fa-times control-button" onClick={editCombatant}></i>
             </div>
             <form onSubmit={editCombatantSubmit} className="encounter-form">

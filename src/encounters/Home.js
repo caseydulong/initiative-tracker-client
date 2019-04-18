@@ -34,7 +34,7 @@ class Home extends Component {
           encounter: response.data.encounter
         })
       })
-      .catch(error => console.error(error))
+      .catch(() => this.props.alert('Failed to create encounter.', 'danger'))
   }
 
   handleSubmit = event => {
@@ -52,10 +52,9 @@ class Home extends Component {
           encounter: response.data.encounter
         })
       })
-      .catch(error => {
-        console.error(error)
+      .catch(() => {
         this.setState({ encounter: { id: '' } })
-        alert('Invalid encounter ID.', 'danger')
+        this.props.alert('Invalid encounter ID.', 'info')
       })
   }
 

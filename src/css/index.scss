@@ -134,6 +134,19 @@ table {
   }
 }
 
+.encounter-form-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: .5rem;
+  * {
+    font-size: 30px;
+    margin: 0;
+    margin-left: .25rem;
+    margin-right: .25rem;
+  }
+}
+
 .selected-combatant {
   background-color: $dark;
   color: $white;
