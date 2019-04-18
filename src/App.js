@@ -14,7 +14,7 @@ import ChangePassword from './auth/components/ChangePassword'
 import Home from './encounters/Home'
 import Encounter from './encounters/Encounter'
 
-import Alert from 'react-bootstrap/Alert'
+import { AlertList } from 'react-bs-notifier'
 
 class App extends Component {
   constructor () {
@@ -22,7 +22,9 @@ class App extends Component {
 
     this.state = {
       user: null,
-      alerts: []
+      alerts: [],
+      timeout: 2500,
+      position: ''
     }
   }
 
@@ -30,23 +32,33 @@ class App extends Component {
 
   clearUser = () => this.setState({ user: null })
 
-  alert = (message, type) => {
-    this.setState({ alerts: [...this.state.alerts, { message, type }] })
+  alert = (message, type, headline = '', timeout = 2500) => {
+    const newAlert = { id: (new Date()).getTime(), type, message }
+    this.setState(prevState => ({ alerts: [...prevState.alerts, newAlert] }), () => {
+      setTimeout(() => {
+        const i = this.state.alerts.indexOf(newAlert)
+        if (i >= 0) {
+          this.setState(prevState => ({
+            // Remove the alert from the array
+            alerts: [...prevState.alerts.slice(0, i), ...prevState.alerts.slice(i + 1)]
+          }))
+        }
+      }, timeout)
+    })
   }
 
   render () {
-    const { alerts, user } = this.state
+    const { alerts, user, timeout, position } = this.state
 
     return (
       <React.Fragment>
         <Header user={user} />
-        {alerts.map((alert, index) => (
-          <Alert key={index} dismissible variant={alert.type}>
-            <Alert.Heading>
-              {alert.message}
-            </Alert.Heading>
-          </Alert>
-        ))}
+
+        <AlertList
+          position={position}
+          alerts={alerts}
+          timeout={timeout} />
+
         <main className="container">
           { /* Auth routes */ }
           <Route path='/sign-up' render={() => (
@@ -64,10 +76,10 @@ class App extends Component {
 
           { /* Encounter routes */ }
           <AuthenticatedRoute user={user} exact path='/' render={() => (
-            <Home user={user} />
+            <Home alert={this.alert} user={user} />
           )} />
           <AuthenticatedRoute user={user} exact path='/encounters/:id' render={() => (
-            <Encounter user={user} />
+            <Encounter alert={this.alert} user={user} />
           )} />
         </main>
       </React.Fragment>
