@@ -10,8 +10,9 @@ class Encounter extends Component {
       user: this.props.user,
       encounter: this.props.location.state.encounter,
       newCombatantForm: false,
-      newCombatantName: '',
-      newCombatantInitiative: '',
+      editCombatantForm: false,
+      combatantNameInput: '',
+      combatantInitiativeInput: '',
       currentTurn: '',
       selectedCombatant: ''
     }
@@ -25,8 +26,8 @@ class Encounter extends Component {
     })
       .then(response => this.setState({
         encounter: response.data.encounter,
-        newCombatantName: '',
-        newCombatantInitiative: '',
+        combatantNameInput: '',
+        combatantInitiativeInput: '',
         currentTurn: '',
         selectedCombatant: ''
       }))
@@ -36,12 +37,47 @@ class Encounter extends Component {
   newCombatantSubmit = event => {
     event.preventDefault()
 
-    const { newCombatantName, newCombatantInitiative } = this.state
+    const { combatantNameInput, combatantInitiativeInput } = this.state
 
     const combatants = this.state.encounter.combatants
     combatants.push({
-      name: newCombatantName,
-      initiative: newCombatantInitiative
+      name: combatantNameInput,
+      initiative: combatantInitiativeInput
+    })
+    combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
+
+    axios({
+      url: `${apiUrl}/encounters/${this.state.encounter._id}`,
+      method: 'patch',
+      headers: {
+        'Authorization': `Token token=${this.state.user.token}`
+      },
+      data: { encounter: {
+        owner: this.state.encounter.owner,
+        combatants: combatants
+      } }
+    })
+      .then(this.refreshEncounter)
+      .catch(console.error)
+  }
+
+  editCombatantSubmit = event => {
+    event.preventDefault()
+
+    const { combatantNameInput, combatantInitiativeInput } = this.state
+
+    const combatants = this.state.encounter.combatants
+    const index = () => {
+      for (let i = 0; i < combatants.length; i += 1) {
+        if (combatants[i]._id === this.state.selectedCombatant) {
+          return i
+        }
+      }
+    }
+    combatants.splice(index(), 1)
+    combatants.push({
+      name: combatantNameInput,
+      initiative: combatantInitiativeInput
     })
     combatants.sort((a, b) => Number(b.initiative) - Number(a.initiative))
 
@@ -64,14 +100,44 @@ class Encounter extends Component {
     this.setState({ ...this.state, [event.target.name]: event.target.value })
   }
 
+  editCombatant = () => {
+    if (!this.state.editCombatantForm && this.state.selectedCombatant !== '') {
+      const combatants = this.state.encounter.combatants
+      const index = () => {
+        for (let i = 0; i < combatants.length; i += 1) {
+          if (combatants[i]._id === this.state.selectedCombatant) {
+            return i
+          }
+        }
+      }
+      this.setState({
+        newCombatantForm: false,
+        editCombatantForm: true,
+        combatantNameInput: combatants[index()].name,
+        combatantInitiativeInput: combatants[index()].initiative
+      })
+    } else {
+      this.setState({
+        editCombatantForm: false,
+        combatantNameInput: '',
+        combatantInitiativeInput: ''
+      })
+    }
+  }
+
   newCombatant = () => {
     if (!this.state.newCombatantForm) {
-      this.setState({ newCombatantForm: true })
+      this.setState({
+        newCombatantForm: true,
+        editCombatantForm: false,
+        combatantNameInput: '',
+        combatantInitiativeInput: ''
+      })
     } else {
       this.setState({
         newCombatantForm: false,
-        newCombatantName: '',
-        newCombatantInitiative: ''
+        combatantNameInput: '',
+        combatantInitiativeInput: ''
       })
     }
   }
@@ -126,8 +192,11 @@ class Encounter extends Component {
 
   render () {
     // Methods
-    const { newCombatant,
+    const {
+      newCombatant,
+      editCombatant,
       newCombatantSubmit,
+      editCombatantSubmit,
       handleChange,
       nextTurn,
       selectCombatant,
@@ -136,8 +205,9 @@ class Encounter extends Component {
     // State variables
     const {
       newCombatantForm,
-      newCombatantName,
-      newCombatantInitiative,
+      editCombatantForm,
+      combatantNameInput,
+      combatantInitiativeInput,
       currentTurn,
       selectedCombatant } = this.state
 
@@ -196,15 +266,15 @@ class Encounter extends Component {
             <form onSubmit={newCombatantSubmit} className="encounter-form">
               <div className="encounter-form-interior">
                 <input
-                  value={newCombatantName}
-                  name="newCombatantName"
+                  value={combatantNameInput}
+                  name="combatantNameInput"
                   type="text"
                   placeholder="Name"
                   onChange={handleChange}
                   required />
                 <input
-                  value={newCombatantInitiative}
-                  name="newCombatantInitiative"
+                  value={combatantInitiativeInput}
+                  name="combatantInitiativeInput"
                   type="number"
                   min="1"
                   max="999"
@@ -218,12 +288,42 @@ class Encounter extends Component {
             </form>
           </section>
         ) : ''}
+        {editCombatantForm ? (
+          <section className="encounter-form-container">
+            <div className="encounter-form-interior">
+              <i className="fas fa-times control-button" onClick={editCombatant}></i>
+            </div>
+            <form onSubmit={editCombatantSubmit} className="encounter-form">
+              <div className="encounter-form-interior">
+                <input
+                  value={combatantNameInput}
+                  name="combatantNameInput"
+                  type="text"
+                  placeholder="Name"
+                  onChange={handleChange}
+                  required />
+                <input
+                  value={combatantInitiativeInput}
+                  name="combatantInitiativeInput"
+                  type="number"
+                  min="1"
+                  max="999"
+                  placeholder="Initiative"
+                  onChange={handleChange}
+                  required />
+              </div>
+              <div className="encounter-form-interior">
+                <button type="submit">Update Combatant</button>
+              </div>
+            </form>
+          </section>
+        ) : ''}
         { /* TEMPORARY DIV TO PREVENT FOOTER OVERLAP */ }
         <div className="temp-div"></div>
         <section className="encounter-controls">
           <i className="fas fa-plus control-button" onClick={newCombatant}></i>
           <i className="fas fa-skull control-button" onClick={deleteCombatant}></i>
-          <i className="fas fa-edit control-button"></i>
+          <i className="fas fa-edit control-button" onClick={editCombatant}></i>
           <i className="fas fa-play control-button" onClick={nextTurn}></i>
         </section>
       </div>
