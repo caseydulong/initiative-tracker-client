@@ -27,7 +27,8 @@ class Encounter extends Component {
         encounter: response.data.encounter,
         newCombatantName: '',
         newCombatantInitiative: '',
-        currentTurn: ''
+        currentTurn: '',
+        selectedCombatant: ''
       }))
       .catch(console.log)
   }
@@ -52,8 +53,7 @@ class Encounter extends Component {
       },
       data: { encounter: {
         owner: this.state.encounter.owner,
-        combatants: combatants,
-        _id: this.state.encounter._id
+        combatants: combatants
       } }
     })
       .then(this.refreshEncounter)
@@ -92,13 +92,46 @@ class Encounter extends Component {
     this.setState({ selectedCombatant: event.currentTarget.dataset.id })
   }
 
+  deleteCombatant = () => {
+    if (this.state.selectedCombatant !== '') {
+      const combatants = this.state.encounter.combatants
+
+      const index = () => {
+        for (let i = 0; i < combatants.length; i += 1) {
+          if (combatants[i]._id === this.state.selectedCombatant) {
+            return i
+          }
+        }
+      }
+
+      combatants.splice(index(), 1)
+
+      axios({
+        url: `${apiUrl}/encounters/${this.state.encounter._id}`,
+        method: 'patch',
+        headers: {
+          'Authorization': `Token token=${this.state.user.token}`
+        },
+        data: { encounter: {
+          owner: this.state.encounter.owner,
+          combatants: combatants
+        } }
+      })
+        .then(this.refreshEncounter)
+        .catch(console.error)
+    } else {
+      alert('Must select a combatant.', 'danger')
+    }
+  }
+
   render () {
     // Methods
     const { newCombatant,
       newCombatantSubmit,
       handleChange,
       nextTurn,
-      selectCombatant } = this
+      selectCombatant,
+      deleteCombatant } = this
 
     // State variables
     const {
@@ -121,7 +154,7 @@ class Encounter extends Component {
               <col width="20%" />
             </colgroup>
             <thead>
-              <tr>
+              <tr onClick={() => this.setState({ selectedCombatant: '' })}>
                 <th></th>
                 <th>Combatant</th>
                 <th className="init-col">Initiative</th>
@@ -189,7 +222,7 @@ class Encounter extends Component {
         <div className="temp-div"></div>
         <section className="encounter-controls">
           <i className="fas fa-plus control-button" onClick={newCombatant}></i>
-          <i className="fas fa-skull control-button"></i>
+          <i className="fas fa-skull control-button" onClick={deleteCombatant}></i>
           <i className="fas fa-edit control-button"></i>
           <i className="fas fa-play control-button" onClick={nextTurn}></i>
         </section>
