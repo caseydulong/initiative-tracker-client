@@ -4,6 +4,7 @@ $gray: #ddd;
 $dark-red: #8b0000;
 $dark: #343a40;
 $cornsilk: #fff8dc;
+$lime: #0f0;
 
 button {
   background-color: $dark-red;
@@ -67,12 +68,15 @@ table {
   flex-direction: column;
   justify-content: center;
   width: 100%;
+
   h2 {
     margin: 0;
     padding: 1rem;
   }
+
   p {
     padding: 1rem;
+    text-align: center;
   }
 }
 
@@ -95,6 +99,7 @@ table {
   &:hover {
     text-shadow: 0 0 10px $white;
   }
+
   &:active {
     color: $dark-red;
     text-shadow: 0 0 10px $dark-red;
@@ -112,21 +117,26 @@ table {
   justify-content: flex-end;
   padding: .5rem;
   width: 100%;
+
   * {
     margin-left: .25rem;
     margin-right: .25rem;
     padding: .5rem;
   }
+
   input {
     padding: .5rem;
     width: 100%;
   }
+
   .control-button {
     font-size: 35px;
     padding: 0;
+
     &:hover {
       text-shadow: 0 0 10px $dark;
     }
+
     &:active {
       color: $dark-red;
       text-shadow: 0 0 10px $dark-red;
@@ -139,6 +149,7 @@ table {
   display: flex;
   justify-content: space-between;
   padding: .5rem;
+
   * {
     font-size: 30px;
     margin: 0;
@@ -153,7 +164,7 @@ table {
 }
 
 .current-turn {
-  background-color: lime;
+  background-color: $lime;
 }
 
 // HOME
@@ -163,11 +174,12 @@ table {
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  width: 400px;
 
   * {
     margin: 0;
     padding: 1rem;
-    width: 500px;
+    width: 100%;
   }
 }
 
@@ -188,4 +200,24 @@ table {
 .temp-div {
   height: 75px;
   width: 100%;
+}
+
+@media (max-width: 600px) {
+  table {
+    width: 100%;
+  }
+  .encounter-table {
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+
+  .encounter-form-container {
+    width: 100%;
+  }
+
+  .home {
+    padding-left: .5rem;
+    padding-right: .5rem;
+    width: 100%;
+  }
 }

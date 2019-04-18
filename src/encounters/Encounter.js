@@ -65,7 +65,11 @@ class Encounter extends Component {
         combatants: combatants
       } }
     })
-      .then(this.refreshEncounter)
+      .then(() => {
+        this.refreshEncounter()
+        // document.getElementById('combatantNameInput').focus()
+        document.getElementById('combatantNameInput').select()
+      })
       .catch(() => {
         this.props.alert('Failed to add combatant.', 'danger')
         this.clearForms()
@@ -104,7 +108,10 @@ class Encounter extends Component {
           combatants: combatants
         } }
       })
-        .then(this.refreshEncounter)
+        .then(() => {
+          this.setState({ editCombatantForm: false })
+          this.refreshEncounter()
+        })
         .catch(() => {
           this.props.alert('Failed to update combatant.', 'danger')
           this.clearForms()
@@ -294,6 +301,7 @@ class Encounter extends Component {
                 <input
                   value={combatantNameInput}
                   name="combatantNameInput"
+                  id="combatantNameInput"
                   type="text"
                   placeholder="Name"
                   onChange={handleChange}
@@ -317,7 +325,7 @@ class Encounter extends Component {
         {editCombatantForm ? (
           <section className="encounter-form-container">
             <div className="encounter-form-header">
-              <h5>Edit Selected Combatant</h5>
+              <h5>Edit Combatant</h5>
               <i className="fas fa-times control-button" onClick={editCombatant}></i>
             </div>
             <form onSubmit={editCombatantSubmit} className="encounter-form">

@@ -27,7 +27,6 @@ const Header = ({ user }) => (
   <header className="main-header">
     <h1>Initiative Tracker</h1>
     <nav>
-      { user && <span>Welcome, {user.email}</span>}
       { user ? authenticatedOptions : unauthenticatedOptions }
       { alwaysOptions }
     </nav>
