@@ -23,8 +23,8 @@ class App extends Component {
     this.state = {
       user: null,
       alerts: [],
-      timeout: 2500,
-      position: ''
+      timeout: 3000,
+      position: 'top-left'
     }
   }
 
@@ -32,7 +32,7 @@ class App extends Component {
 
   clearUser = () => this.setState({ user: null })
 
-  alert = (message, type, headline = '', timeout = 2500) => {
+  alert = (message, type, headline = '', timeout = 3000) => {
     const newAlert = { id: (new Date()).getTime(), type, message }
     this.setState(prevState => ({ alerts: [...prevState.alerts, newAlert] }), () => {
       setTimeout(() => {
