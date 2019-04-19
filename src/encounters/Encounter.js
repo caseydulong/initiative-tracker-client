@@ -180,7 +180,6 @@ class Encounter extends Component {
     } else {
       this.setState({ currentTurn: currentTurn + 1 })
     }
-    console.log(currentTurn)
   }
 
   selectCombatant = event => {
