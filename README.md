@@ -1,14 +1,3 @@
-- Explaination of app
-- Link to other repo
-- Link techs used
-- List unsolved problems
-- Document planning
-
-Front end
-- link to wireframe and user stories
-- embedded screenshot of app
-- installation instructions
-
 # D&D Initiative Tracker Client
 
 This app is a simple initiative tracker for playing Dungeons & Dragons or similar tabletop RPGs.  A GM can create a new encounter and enter the combatants and their initiatives.  The play button can then be used to cycle through the turn order.  You can return to the encounter later using the generated ID at the bottom of each new encounter.
